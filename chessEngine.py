@@ -312,9 +312,9 @@ class GameState():
 
 
     def findValidMoves(self):
-        for log in self.castleRightsLog:
+        '''for log in self.castleRightsLog:
             print(log.wks,log.wqs,log.bks,log.bqs,end=',')
-        print()
+        print()'''
         temp_enpassant = self.enpassant
         temp_CastleRights = CastleRights(self.currentCastelingRight.wks, self.currentCastelingRight.wqs, self.currentCastelingRight.bks, self.currentCastelingRight.bqs)
 

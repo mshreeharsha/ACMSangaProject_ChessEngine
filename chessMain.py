@@ -1,7 +1,7 @@
 
 # File for handling user input and displaying current game state
 import pygame as p
-import chessEngine , SmartMoveFinder
+import chessEngine , SmartMoveFinder , mcts1
 # Define some constants
 # Initialise our pygame package
 p.init()
@@ -180,9 +180,13 @@ def main():
         #AI Move Finder Logic
 
         if not gameOver and not humanTurn:
-            AIMove = SmartMoveFinder.findBestMoveMinMax(gs, validMoves)
+            '''AIMove = SmartMoveFinder.findBestMoveMinMax(gs, validMoves)
             if AIMove is None:
                 AIMove = SmartMoveFinder.findRandomMove(validMoves)
+                '''
+            player = mcts1.MCTS(gs)
+            AIMove = player.select_move()
+            print(AIMove)
             gs.makeMove(AIMove)
             moveMade = True
 
