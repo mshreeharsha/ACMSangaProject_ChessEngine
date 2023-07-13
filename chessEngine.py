@@ -35,7 +35,7 @@ class GameState():
         self.enpassantLog=[self.enpassant]
         self.currentCastelingRight = CastleRights(True,True,True,True)
         self.castleRightsLog=[CastleRights(self.currentCastelingRight.wks,self.currentCastelingRight.wqs,
-                self.currentCastelingRight.bks,self.currentCastelingRight.bqs)]
+        self.currentCastelingRight.bks,self.currentCastelingRight.bqs)]
 
     def makeMove(self, move):
         # When we move a piece from (a,b) to (c,d), the piece disappears from initial position (a,b)
@@ -101,8 +101,10 @@ class GameState():
             self.enpassantLog.pop()
             self.enpassant = self.enpassantLog[-1]
 
+            self.checkmate=False
+            self.stalemate=False
             
-
+        
             self.castleRightsLog.pop()
             self.currentCastelingRight= self.castleRightsLog[-1]
 
@@ -114,12 +116,8 @@ class GameState():
                         self.board[move.endRow][move.endCol-1]="xx"
                 else:
                         self.board[move.endRow][move.endCol-2]=self.board[move.endRow][move.endCol+1]
-                        self.board[move.endRow][move.endCol+1]="xx"
-
-
-
-            self.checkmate=False
-            self.stalemate=False
+                        self.board[move.endRow][move.endCol+1]="xx"  
+ 
 
     def updateCastleRights(self,move):
         if move.pieceMoved=="wK":
@@ -141,7 +139,7 @@ class GameState():
                     self.currentCastelingRight.bqs=False
                 elif move.startCol==7:
                     self.currentCastelingRight.bks=False
-
+   
     def getAllMoves(self):
         moves = []
         # Nested for loop to check for all pieces position and the squares they are covering
@@ -307,23 +305,19 @@ class GameState():
     def getQueensideCastleMoves(self,r,c,moves):
         if self.board[r][c-1]=='xx' and self.board[r][c-2]=='xx' and self.board[r][c-3]=='xx':
             if not self.squareUnderAttack(r, c-1) and  not self.squareUnderAttack(r, c-2):
-                moves.append(Move((r,c),(r,c-2),self.board,isCastleMove=True))
-
-
+                moves.append(Move((r,c),(r,c-2),self.board,isCastleMove=True)) 
+ 
 
     def findValidMoves(self):
-        '''for log in self.castleRightsLog:
-            print(log.wks,log.wqs,log.bks,log.bqs,end=',')
-        print()'''
         temp_enpassant = self.enpassant
-        temp_CastleRights = CastleRights(self.currentCastelingRight.wks, self.currentCastelingRight.wqs, self.currentCastelingRight.bks, self.currentCastelingRight.bqs)
+        #temp_CastleRights = CastleRights(self.currentCastelingRight.wks, self.currentCastelingRight.wqs, self.currentCastelingRight.bks, self.currentCastelingRight.bqs)
 
         moves = self.getAllMoves()
 
-        if self.whiteToPlay:
-            self.getCastleMoves(self.whiteKingLocation[0], self.whiteKingLocation[1], moves)
-        else:
-            self.getCastleMoves(self.blackKingLocation[0], self.blackKingLocation[1], moves)
+        # if self.whiteToPlay:
+        #     self.getCastleMoves(self.whiteKingLocation[0], self.whiteKingLocation[1], moves)
+        # else:
+        #     self.getCastleMoves(self.blackKingLocation[0], self.blackKingLocation[1], moves)
 
         for i in range(len(moves)-1, -1, -1):
             # Delete moves which are invalid - leading to checks in next move
@@ -346,7 +340,14 @@ class GameState():
             self.stalemate=False
             
         self.enpassant = temp_enpassant
-        self.currentCastelingRight = temp_CastleRights
+        #self.currentCastelingRight = temp_CastleRight
+        count=0
+        for i in range(8):
+            for j in range (8):
+                if self.board[i][j]!="xx":
+                    count=count+1
+        if count<=3:
+            self.stalemate=True
         return moves
 
     # Function to determine if current player is under check
